@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import { UnauthorizedError } from '../utils/apiError';
 import { JwtPayload } from '../modules/auth/auth.types';
-
+import { env } from '../config/env';
 export const authenticate = (
   req: Request,
   res: Response,
@@ -19,7 +19,7 @@ export const authenticate = (
   try {
     const decoded = jwt.verify(
       token,
-      process.env.ACCESS_TOKEN_SECRET!
+      env.ACCESS_TOKEN_SECRET
     ) as JwtPayload;
 
     req.user = decoded; // ✅ attach user context
