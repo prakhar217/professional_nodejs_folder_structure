@@ -1,0 +1,49 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    name: Build & Verify
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1️⃣ Checkout code
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 2️⃣ Setup Node (match production)
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: yarn
+
+      # 3️⃣ Install dependencies (locked)
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      # 4️⃣ Lint (code quality gate)
+      - name: Run ESLint
+        run: yarn lint
+
+      # 5️⃣ Typecheck (this is NOT optional)
+      - name: TypeScript typecheck
+        run: yarn tsc --noEmit
+
+      # 6️⃣ Build project
+      - name: Build
+        run: yarn build
+
+      # 7️⃣ Generate OpenAPI (contract must be valid)
+      - name: Generate OpenAPI
+        run: |
+          node -e "require('./dist/docs/openapi')"
+
+      # 8️⃣ Docker build (production parity)
+      - name: Build Docker image
+        run: docker build -t backend-api:ci .

@@ -8,8 +8,12 @@ import helmet from "helmet";
 import cors from "cors";
 import { corsOptions } from "./config/cors";
 import { apiLimiter } from "./middleware/rateLimiters";
+import './lib/openapi'; // MUST be first
+import { setupSwagger } from "./docs/v1/swagger";
 
 const app = express();
+
+setupSwagger(app);
 
 app.use(
   helmet({
