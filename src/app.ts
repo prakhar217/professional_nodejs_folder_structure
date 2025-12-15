@@ -1,7 +1,7 @@
 import express from "express";
 import cookieParser from "cookie-parser";
-import userRoutes from "./modules/user/user.routes";
-import authRoutes from "./modules/auth/auth.routes";
+import authV1Routes from './modules/api/v1/auth.routes';
+import userV1Routes from './modules/api/v1/user.routes';
 import errorHandler from "./middleware/errorHandler";
 import httpLogger from "./middleware/httpLogger";
 import helmet from "helmet";
@@ -23,8 +23,8 @@ app.use(httpLogger); // ⬅ FIRST (request lifecycle)
 app.use(express.json());
 app.use(cookieParser());
 
-app.use("/users", userRoutes);
-app.use("/auth", authRoutes);
+app.use('/api/v1/auth', authV1Routes);
+app.use('/api/v1/users', userV1Routes);
 
 app.use('/api', apiLimiter);
 
