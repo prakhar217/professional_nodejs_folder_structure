@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { ApiError } from '../utils/apiError';
+import logger from '../utils/logger';
 
 const errorHandler = (
   err: any,
@@ -7,7 +8,15 @@ const errorHandler = (
   res: Response,
   next: NextFunction
 ) => {
-  console.error("Error:", err);
+  logger.error(
+    {
+      err,
+      requestId: req.id,
+      path: req.path,
+      method: req.method,
+    },
+    'Unhandled error'
+  );
 
   if (err instanceof ApiError) {
     return res.status(err.statusCode).json({
@@ -18,7 +27,7 @@ const errorHandler = (
 
   return res.status(500).json({
     success: false,
-    message: "Internal server error",
+    message: 'Internal server error',
   });
 };
 
